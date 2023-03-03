@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Mulai Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <style media="screen">
+        @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css");
+
+        header {
+            background-color: azure;
+        }
+
+        .btn-nav {
+            position: inherit;
+        }
+
+        .body-message {
+            padding-top: 100px;
+        }
+
+        .licst {
+            padding: 10px;
+        }
+
+        .licst:nth-child(even) {
+            background: #c4c4c4;
+        }
+
+        /* .licst:nth-child(odd) {
+            background: rgb(255, 255, 255);
+        } */
+
+        .formcustom {
+            background-color: azure;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="fixed-top d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom p-3">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                <svg class="bi me-2" width="40" height="32">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+                <span class="fs-4 fw-bold"><i class="bi bi-chat-heart"></i> Cattingan</span>
+            </a>
+            <ul class="nav nav-pills">
+                <li class="nav-item p-2"><a href="#" class="btn-nav btn btn-outline-info active"
+                        aria-current="page">Home</a></li>
+                <li class="nav-item p-2"><a href="#" class="btn-nav btn btn-outline-info">Features</a></li>
+                <li class="nav-item p-2"><a href="#" class="btn-nav btn btn-outline-info">FAQs</a></li>
+                <li class="nav-item p-2"><a href="#" class="btn-nav btn btn-outline-info">About</a></li>
+            </ul>
+        </header>
+    </div>
+    <div class="container body-message">
+        <div class="row">
+            <div class="col">
+                <ul id="messages" class="list-group list-group-flush licst">
+                    <!-- Message -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <form class="fixed-bottom p-3 formcustom border-top">
+        <div class="row">
+            <div class="col-md-6">
+                <input id="nama_user" type="text" class="form-control" placeholder="Nama" aria-label="Username"
+                    required>
+            </div>
+            <div class="col-md-6"> <i id="tanggal"></i></div>
+        </div>
+        <div class="row">
+            <div class="col-12 pt-2">
+                <input type="text" class="form-control form-control-lg" id="text_box" placeholder="Tulis pesan..."
+                    required>
+            </div>
+            <div class="col-12 pt-2 text-center">
+                <button class="btn btn-info form-control"> Kirim </button>
+            </div>
+        </div>
+
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+    <script>
+        const d = new Date();
+        var date = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear();
+        var datetime = d.getMinutes() + ":" + d.getHours() + " " + d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear();
+        document.getElementById('tanggal').innerHTML = date;
+        var socket = io();
+        var username = '';
+
+        $('form').submit(function () {
+            // User input
+            username = $('#nama_user').val();
+            // backendnya di server.js
+            socket.emit('newMessage', `${datetime}<div class="badge bg-primary text-wrap" style="width: 6rem;">
+                ${username} 
+                 </div>
+                 "${$('#text_box').val()}".`);
+
+            // ketika user selesaii ketik
+            $('#text_box').val('');
+            return false;
+        });
+
+        // Untuk menampilkan frontend
+        socket.on('newMessage', function (msg) {
+            $('#messages').append($('<li class="list-group list-group-flush licst">').html(msg));
+        });
+    </script>
+</body>
+
+</html>
